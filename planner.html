@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Advanced Local Task Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* =========================================
+       CSS Variables & Theme Definitions
+    ========================================= */
+    :root {
+      --background-color: #f4f4f4;
+      --text-color: #333;
+      --primary-color: #3498db;
+      --secondary-color: #2ecc71;
+      --accent-color: #e74c3c;
+      --header-bg: #fff;
+    }
+    /* Dark theme overrides */
+    body.dark-theme {
+      --background-color: #333;
+      --text-color: #f4f4f4;
+      --primary-color: #2980b9;
+      --secondary-color: #27ae60;
+      --accent-color: #c0392b;
+      --header-bg: #444;
+    }
+    /* Blue theme overrides */
+    body.blue-theme {
+      --background-color: #e8f0fe;
+      --text-color: #0b3d91;
+      --primary-color: #1a73e8;
+      --secondary-color: #34a853;
+      --accent-color: #ea4335;
+      --header-bg: #d2e3fc;
+    }
+
+    /* =========================================
+       Global Styles & Responsive Layout
+    ========================================= */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: var(--background-color);
+      color: var(--text-color);
+    }
+    #app {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--header-bg);
+      padding: 10px 20px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5em;
+    }
+    header select, header button {
+      padding: 5px 10px;
+      font-size: 1em;
+      margin-left: 10px;
+    }
+
+    /* =========================================
+       Motivational Tip Section
+    ========================================= */
+    #motivational-tip {
+      background-color: var(--secondary-color);
+      color: #fff;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 20px;
+      text-align: center;
+      font-style: italic;
+    }
+
+    /* =========================================
+       Task Manager Styles
+    ========================================= */
+    #task-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    #task-form input, #task-form textarea, #task-form button {
+      padding: 10px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    #task-form input, #task-form textarea {
+      flex: 1 1 200px;
+    }
+    #task-form button {
+      flex: 0 0 auto;
+      background-color: var(--primary-color);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    #task-form button:hover {
+      opacity: 0.9;
+    }
+    #task-list {
+      list-style: none;
+      padding: 0;
+    }
+    .task-item {
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-left: 5px solid var(--primary-color);
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+    }
+    .task-item.completed {
+      opacity: 0.6;
+      text-decoration: line-through;
+    }
+    .task-item header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .task-item .actions button {
+      margin-left: 5px;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      background-color: var(--accent-color);
+      color: #fff;
+    }
+    .task-item .actions button.edit {
+      background-color: var(--primary-color);
+    }
+    .task-item .actions button.complete {
+      background-color: var(--secondary-color);
+    }
+
+    /* =========================================
+       Corner Timer Styles
+    ========================================= */
+    #corner-timer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: var(--header-bg);
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      width: 200px;
+    }
+    #corner-timer input, #corner-timer button {
+      width: 100%;
+      margin-bottom: 5px;
+      padding: 5px;
+    }
+    #timer-display {
+      font-size: 1.2em;
+      text-align: center;
+      margin: 5px 0;
+    }
+
+    /* =========================================
+       Responsive Adjustments
+    ========================================= */
+    @media(max-width:600px){
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #corner-timer {
+        width: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- Header Section with Title, Theme Selector, and Download Button -->
+    <header>
+      <h1>Advanced Task Manager</h1>
+      <div>
+        <select id="theme-selector">
+          <option value="">Select Theme</option>
+          <option value="default">Light</option>
+          <option value="dark-theme">Dark</option>
+          <option value="blue-theme">Blue</option>
+        </select>
+        <button id="download-btn">Download Timetable</button>
+      </div>
+    </header>
+
+    <!-- Motivational Tip Section -->
+    <section id="motivational-tip"></section>
+
+    <!-- Task Manager Section: Task Form and Task List -->
+    <section id="task-manager">
+      <!-- Form to Add a New Task -->
+      <form id="task-form">
+        <input type="text" id="task-title" placeholder="Task Title" required>
+        <textarea id="task-desc" placeholder="Task Description"></textarea>
+        <input type="datetime-local" id="task-time" required>
+        <input type="number" id="task-duration" placeholder="Duration (minutes)" required>
+        <button type="submit">Add Task</button>
+      </form>
+      
+      <!-- Task List -->
+      <ul id="task-list"></ul>
+    </section>
+
+    <!-- Corner Timer for Starting Tasks -->
+    <div id="corner-timer">
+      <h3>Task Timer</h3>
+      <input type="number" id="timer-duration" placeholder="Minutes" min="1">
+      <button id="start-timer">Start Timer</button>
+      <div id="timer-display">00:00</div>
+      <button id="stop-timer">Stop Timer</button>
+    </div>
+  </div>
+
+  <script>
+    /************************************************************
+     * Advanced Local Task Manager JavaScript Code
+     ************************************************************/
+
+    // Global array to hold tasks
+    let tasks = [];
+
+    // Timer variables
+    let timerInterval = null;
+    let timerRemainingSeconds = 0;
+
+    // Array of motivational tips
+    const motivationalTips = [
+      "Keep pushing forward, every step counts!",
+      "Stay focused and never give up.",
+      "Believe in yourself, you are capable of great things!",
+      "Small progress is still progress.",
+      "Your potential is limitless."
+    ];
+
+    // ----------------------------
+    // Motivational Tip Functionality
+    // ----------------------------
+    // Display a random motivational tip on load
+    function displayMotivationalTip() {
+      const tipElement = document.getElementById('motivational-tip');
+      const randomTip = motivationalTips[Math.floor(Math.random() * motivationalTips.length)];
+      tipElement.textContent = randomTip;
+    }
+    displayMotivationalTip();
+
+    // ----------------------------
+    // Local Storage Functions
+    // ----------------------------
+    // Save tasks to localStorage
+    function saveTasks() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+    // Load tasks from localStorage
+    function loadTasks() {
+      const storedTasks = localStorage.getItem('tasks');
+      if (storedTasks) {
+        tasks = JSON.parse(storedTasks);
+      }
+    }
+
+    // ----------------------------
+    // Task Rendering and Management
+    // ----------------------------
+    // Render the task list in the UI
+    function renderTasks() {
+      const taskList = document.getElementById('task-list');
+      taskList.innerHTML = ''; // Clear current list
+
+      // Sort tasks by scheduled time
+      tasks.sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
+
+      tasks.forEach(task => {
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        if(task.completed) li.classList.add('completed');
+        li.dataset.id = task.id;
+
+        // Task header with title and action buttons
+        const header = document.createElement('header');
+        const title = document.createElement('h4');
+        title.textContent = task.title;
+        header.appendChild(title);
+
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'actions';
+
+        // Edit button
+        const editBtn = document.createElement('button');
+        editBtn.textContent = 'Edit';
+        editBtn.className = 'edit';
+        editBtn.onclick = () => editTask(task.id);
+        actionsDiv.appendChild(editBtn);
+
+        // Complete/Undo button
+        const completeBtn = document.createElement('button');
+        completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
+        completeBtn.className = 'complete';
+        completeBtn.onclick = () => toggleCompleteTask(task.id);
+        actionsDiv.appendChild(completeBtn);
+
+        // Delete button
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.onclick = () => deleteTask(task.id);
+        actionsDiv.appendChild(deleteBtn);
+
+        header.appendChild(actionsDiv);
+        li.appendChild(header);
+
+        // Task details section
+        const details = document.createElement('div');
+        details.innerHTML = `
+          <p>${task.description}</p>
+          <p><strong>Scheduled:</strong> ${new Date(task.scheduledTime).toLocaleString()}</p>
+          <p><strong>Duration:</strong> ${task.duration} minutes</p>
+        `;
+        if(task.completed && task.actualCompletionTime) {
+          // Calculate delay in minutes (if any)
+          let delay = Math.max(0, (new Date(task.actualCompletionTime) - new Date(task.scheduledTime)) / 60000).toFixed(2);
+          details.innerHTML += `<p><strong>Completed:</strong> ${new Date(task.actualCompletionTime).toLocaleString()} (${delay} min delay)</p>`;
+        }
+        li.appendChild(details);
+        taskList.appendChild(li);
+      });
+    }
+
+    // Add a new task from the form input
+    function addTask(e) {
+      e.preventDefault();
+      const title = document.getElementById('task-title').value;
+      const description = document.getElementById('task-desc').value;
+      const scheduledTime = document.getElementById('task-time').value;
+      const duration = document.getElementById('task-duration').value;
+
+      // Create a new task object
+      const newTask = {
+        id: Date.now(),
+        title,
+        description,
+        scheduledTime,
+        duration,
+        completed: false,
+        actualCompletionTime: null
+      };
+
+      tasks.push(newTask);
+      saveTasks();
+      renderTasks();
+      document.getElementById('task-form').reset();
+    }
+
+    // Edit a task (using prompt for simplicity)
+    function editTask(id) {
+      const task = tasks.find(t => t.id == id);
+      if(!task) return;
+
+      const newTitle = prompt("Edit Task Title:", task.title);
+      if(newTitle !== null) task.title = newTitle;
+      const newDesc = prompt("Edit Task Description:", task.description);
+      if(newDesc !== null) task.description = newDesc;
+      const newTime = prompt("Edit Scheduled Time (YYYY-MM-DDTHH:MM):", task.scheduledTime);
+      if(newTime !== null) task.scheduledTime = newTime;
+      const newDuration = prompt("Edit Duration (minutes):", task.duration);
+      if(newDuration !== null) task.duration = newDuration;
+
+      saveTasks();
+      renderTasks();
+    }
+
+    // Delete a task from the list
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id != id);
+      saveTasks();
+      renderTasks();
+    }
+
+    // Toggle completion status for a task and record completion time if needed
+    function toggleCompleteTask(id) {
+      const task = tasks.find(t => t.id == id);
+      if(!task) return;
+
+      task.completed = !task.completed;
+      if(task.completed) {
+        // Record actual completion time
+        task.actualCompletionTime = new Date().toISOString();
+        // Calculate delay (if any) in minutes
+        const delay = Math.max(0, (new Date(task.actualCompletionTime) - new Date(task.scheduledTime)) / 60000);
+        if(delay > 0) {
+          // Adjust scheduled time for subsequent tasks
+          updateSubsequentTasks(task, delay);
+        }
+      } else {
+        // Reset completion time if undone
+        task.actualCompletionTime = null;
+      }
+      saveTasks();
+      renderTasks();
+    }
+
+    // Update scheduled time for tasks that come after a completed task
+    function updateSubsequentTasks(completedTask, delay) {
+      // Ensure tasks are sorted by scheduled time
+      tasks.sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
+      let applyDelay = false;
+      tasks.forEach(task => {
+        if(task.id == completedTask.id) {
+          applyDelay = true;
+          return;
+        }
+        // Only adjust pending tasks after the completed one
+        if(applyDelay && !task.completed) {
+          let currentTime = new Date(task.scheduledTime);
+          currentTime.setMinutes(currentTime.getMinutes() + delay);
+          // Format as YYYY-MM-DDTHH:MM for consistency
+          task.scheduledTime = currentTime.toISOString().slice(0,16);
+        }
+      });
+      saveTasks();
+    }
+
+    // ----------------------------
+    // Event Listeners for Task Management
+    // ----------------------------
+    document.getElementById('task-form').addEventListener('submit', addTask);
+
+    // Load tasks on startup
+    loadTasks();
+    renderTasks();
+
+    // ----------------------------
+    // Corner Timer Functionality
+    // ----------------------------
+    // Start the timer based on input minutes
+    document.getElementById('start-timer').addEventListener('click', function() {
+      const minutes = parseInt(document.getElementById('timer-duration').value);
+      if(isNaN(minutes) || minutes <= 0) return;
+      timerRemainingSeconds = minutes * 60;
+      if(timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(function() {
+        if(timerRemainingSeconds <= 0) {
+          clearInterval(timerInterval);
+          timerInterval = null;
+          document.getElementById('timer-display').textContent = "Time's up!";
+          playSound();
+        } else {
+          const mins = Math.floor(timerRemainingSeconds / 60);
+          const secs = timerRemainingSeconds % 60;
+          document.getElementById('timer-display').textContent = 
+            (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
+          timerRemainingSeconds--;
+        }
+      }, 1000);
+    });
+
+    // Stop the timer manually
+    document.getElementById('stop-timer').addEventListener('click', function() {
+      if(timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+        document.getElementById('timer-display').textContent = "00:00";
+      }
+    });
+
+    // Play a beep sound using the Web Audio API when the timer ends
+    function playSound() {
+      const context = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = context.createOscillator();
+      const gainNode = context.createGain();
+      oscillator.connect(gainNode);
+      gainNode.connect(context.destination);
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 1000; // Frequency in hertz
+      oscillator.start();
+      // Gradually reduce volume over 1 second
+      gainNode.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 1);
+      oscillator.stop(context.currentTime + 1);
+    }
+
+    // ----------------------------
+    // Theme Selection & Persistence
+    // ----------------------------
+    // Change theme based on selector and save preference
+    document.getElementById('theme-selector').addEventListener('change', function() {
+      const theme = this.value;
+      document.body.className = ''; // Reset classes
+      if(theme && theme !== 'default') {
+        document.body.classList.add(theme);
+      }
+      localStorage.setItem('theme', theme);
+    });
+    // Load saved theme on startup
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      if(savedTheme) {
+        document.getElementById('theme-selector').value = savedTheme;
+        if(savedTheme !== 'default') {
+          document.body.classList.add(savedTheme);
+        }
+      }
+    }
+    loadTheme();
+
+    // ----------------------------
+    // Timetable Download Functionality
+    // ----------------------------
+    // Generate a standalone HTML timetable and trigger download
+    function downloadTimetable() {
+      let htmlContent = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task Timetable</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #3498db; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Task Timetable</h1>
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Scheduled Time</th>
+      <th>Duration (min)</th>
+      <th>Status</th>
+    </tr>`;
+      
+      // Sort tasks by scheduled time
+      tasks.sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
+      tasks.forEach(task => {
+        htmlContent += `
+    <tr>
+      <td>${task.title}</td>
+      <td>${task.description}</td>
+      <td>${new Date(task.scheduledTime).toLocaleString()}</td>
+      <td>${task.duration}</td>
+      <td>${task.completed ? 'Completed' : 'Pending'}</td>
+    </tr>`;
+      });
+      
+      htmlContent += `
+  </table>
+</body>
+</html>`;
+      
+      // Create a Blob and trigger the download
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'timetable.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+    document.getElementById('download-btn').addEventListener('click', downloadTimetable);
+  </script>
+</body>
+</html>
