@@ -2,126 +2,191 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Advanced Local Task Manager</title>
+  <title>Advanced Task Manager - Cute & Customizable</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google Font for a cute, rounded look -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap">
   <style>
-    /* =========================================
-       CSS Variables & Theme Definitions
-    ========================================= */
+    /* =========================
+       CSS Variables & Default Theme
+       (Blue-based cute palette)
+    ========================= */
     :root {
-      --background-color: #f4f4f4;
-      --text-color: #333;
-      --primary-color: #3498db;
-      --secondary-color: #2ecc71;
-      --accent-color: #e74c3c;
+      --primary-color: #3498db;       /* Blue */
+      --secondary-color: #5dade2;     /* Lighter Blue */
+      --accent-color: #3498db;
+      --background-gradient: linear-gradient(135deg, #f9f9ff, #e0eafc);
       --header-bg: #fff;
+      --container-bg: #fff;
+      --text-color: #333;
+      --box-shadow-color: rgba(0,0,0,0.1);
+      --modal-bg: #fff;
+      --modal-text: #333;
     }
-    /* Dark theme overrides */
+    /* Additional Themes */
     body.dark-theme {
-      --background-color: #333;
-      --text-color: #f4f4f4;
-      --primary-color: #2980b9;
-      --secondary-color: #27ae60;
-      --accent-color: #c0392b;
-      --header-bg: #444;
+      --primary-color: #2c3e50;
+      --secondary-color: #34495e;
+      --accent-color: #2c3e50;
+      --background-gradient: linear-gradient(135deg, #2c3e50, #34495e);
+      --header-bg: #3c5a72;
+      --container-bg: #2c3e50;
+      --text-color: #ecf0f1;
+      --modal-bg: #3c5a72;
+      --modal-text: #ecf0f1;
     }
-    /* Blue theme overrides */
-    body.blue-theme {
-      --background-color: #e8f0fe;
-      --text-color: #0b3d91;
-      --primary-color: #1a73e8;
-      --secondary-color: #34a853;
-      --accent-color: #ea4335;
-      --header-bg: #d2e3fc;
+    body.black-theme {
+      --primary-color: #000;
+      --secondary-color: #333;
+      --accent-color: #000;
+      --background-gradient: linear-gradient(135deg, #000, #333);
+      --header-bg: #222;
+      --container-bg: #222;
+      --text-color: #fff;
+      --modal-bg: #333;
+      --modal-text: #fff;
+    }
+    body.white-theme {
+      --primary-color: #3498db; /* Keep blue accents on white */
+      --secondary-color: #5dade2;
+      --accent-color: #3498db;
+      --background-gradient: linear-gradient(135deg, #fff, #f2f2f2);
+      --header-bg: #fff;
+      --container-bg: #fff;
+      --text-color: #333;
+      --modal-bg: #fff;
+      --modal-text: #333;
+    }
+    body.dark-reader-theme {
+      --primary-color: #1abc9c;
+      --secondary-color: #16a085;
+      --accent-color: #1abc9c;
+      --background-gradient: linear-gradient(135deg, #2d3436, #636e72);
+      --header-bg: #2d3436;
+      --container-bg: #2d3436;
+      --text-color: #dfe6e9;
+      --modal-bg: #2d3436;
+      --modal-text: #dfe6e9;
     }
 
-    /* =========================================
-       Global Styles & Responsive Layout
-    ========================================= */
+    /* =========================
+       Global Styles & Layout
+    ========================= */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background-color: var(--background-color);
+      font-family: 'Quicksand', sans-serif;
+      background: var(--background-gradient);
       color: var(--text-color);
+      padding: 20px;
+      transition: background 0.5s, color 0.5s;
     }
     #app {
       max-width: 800px;
-      margin: 20px auto;
+      margin: 0 auto;
+      background: var(--container-bg);
       padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px var(--box-shadow-color);
+      transition: background 0.5s;
     }
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: var(--header-bg);
-      padding: 10px 20px;
-      border-radius: 5px;
+      background: var(--header-bg);
+      padding: 15px 20px;
+      border-radius: 15px;
       margin-bottom: 20px;
+      box-shadow: 0 2px 5px var(--box-shadow-color);
+      transition: background 0.5s;
+      animation: fadeIn 0.8s ease;
     }
     header h1 {
-      margin: 0;
-      font-size: 1.5em;
+      font-size: 2em;
+      color: var(--primary-color);
     }
-    header select, header button {
-      padding: 5px 10px;
+    header div.buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    header select, 
+    header button {
+      padding: 10px 15px;
       font-size: 1em;
-      margin-left: 10px;
-    }
-
-    /* =========================================
-       Motivational Tip Section
-    ========================================= */
-    #motivational-tip {
-      background-color: var(--secondary-color);
+      border: none;
+      border-radius: 30px;
+      background: var(--secondary-color);
       color: #fff;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 20px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    header select:hover, 
+    header button:hover {
+      background: var(--primary-color);
+    }
+    /* =========================
+       Motivational Tip Section
+    ========================= */
+    #motivational-tip {
+      background: var(--secondary-color);
+      color: #fff;
+      padding: 15px;
+      border-radius: 15px;
       text-align: center;
       font-style: italic;
+      margin-bottom: 20px;
+      animation: slideIn 0.8s ease-out;
     }
-
-    /* =========================================
-       Task Manager Styles
-    ========================================= */
+    /* =========================
+       Task Manager Section
+    ========================= */
     #task-form {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 15px;
       margin-bottom: 20px;
+      animation: fadeIn 0.8s ease;
     }
-    #task-form input, #task-form textarea, #task-form button {
-      padding: 10px;
+    #task-form input, 
+    #task-form textarea, 
+    #task-form button {
+      padding: 15px;
       font-size: 1em;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
-    #task-form input, #task-form textarea {
+      border: 1px solid #ddd;
+      border-radius: 15px;
       flex: 1 1 200px;
+      transition: border 0.3s;
     }
     #task-form button {
       flex: 0 0 auto;
-      background-color: var(--primary-color);
+      background: var(--primary-color);
       color: #fff;
       border: none;
       cursor: pointer;
+      border-radius: 30px;
     }
     #task-form button:hover {
-      opacity: 0.9;
+      background: var(--secondary-color);
     }
     #task-list {
       list-style: none;
       padding: 0;
     }
     .task-item {
-      background-color: #fff;
-      border: 1px solid #ccc;
+      background: var(--container-bg);
+      border: 1px solid #ddd;
       border-left: 5px solid var(--primary-color);
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
+      border-radius: 15px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 5px var(--box-shadow-color);
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: fadeIn 0.5s ease;
+    }
+    .task-item:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 8px var(--box-shadow-color);
     }
     .task-item.completed {
       opacity: 0.6;
@@ -131,84 +196,128 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 10px;
     }
     .task-item .actions button {
-      margin-left: 5px;
-      padding: 5px 10px;
+      padding: 8px 12px;
       border: none;
-      border-radius: 3px;
+      border-radius: 15px;
       cursor: pointer;
-      background-color: var(--accent-color);
+      background: var(--accent-color);
       color: #fff;
+      margin-left: 10px;
+      transition: background 0.3s;
     }
     .task-item .actions button.edit {
-      background-color: var(--primary-color);
+      background: var(--primary-color);
     }
     .task-item .actions button.complete {
-      background-color: var(--secondary-color);
+      background: var(--secondary-color);
     }
-
-    /* =========================================
-       Corner Timer Styles
-    ========================================= */
-    #corner-timer {
+    .task-item .actions button:hover {
+      opacity: 0.9;
+    }
+    /* =========================
+       Modal Styles (for Pomodoro)
+    ========================= */
+    .modal {
+      display: none;
       position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: var(--header-bg);
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 5px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      width: 200px;
+      z-index: 1000;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.4);
+      align-items: center;
+      justify-content: center;
     }
-    #corner-timer input, #corner-timer button {
-      width: 100%;
-      margin-bottom: 5px;
-      padding: 5px;
+    .modal-content {
+      background: var(--modal-bg);
+      color: var(--modal-text);
+      padding: 20px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 500px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      animation: fadeIn 0.3s ease;
     }
-    #timer-display {
-      font-size: 1.2em;
+    .modal-content h2 {
+      margin-bottom: 15px;
       text-align: center;
-      margin: 5px 0;
+      color: var(--primary-color);
     }
-
-    /* =========================================
-       Responsive Adjustments
-    ========================================= */
-    @media(max-width:600px){
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      #corner-timer {
-        width: 150px;
-      }
+    .modal-content label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    .modal-content select, 
+    .modal-content input[type="range"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 1em;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .modal-content button {
+      width: 100%;
+      padding: 10px;
+      background: var(--primary-color);
+      color: #fff;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s;
+    }
+    .modal-content button:hover {
+      background: var(--secondary-color);
+    }
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #888;
+    }
+    /* =========================
+       Keyframe Animations
+    ========================= */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-100%); }
+      to { opacity: 1; transform: translateX(0); }
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <!-- Header Section with Title, Theme Selector, and Download Button -->
+    <!-- Header Section -->
     <header>
       <h1>Advanced Task Manager</h1>
-      <div>
+      <div class="buttons">
         <select id="theme-selector">
           <option value="">Select Theme</option>
-          <option value="default">Light</option>
+          <option value="default">Default (Blue)</option>
           <option value="dark-theme">Dark</option>
-          <option value="blue-theme">Blue</option>
+          <option value="black-theme">Black</option>
+          <option value="white-theme">White</option>
+          <option value="dark-reader-theme">Dark Reader</option>
         </select>
         <button id="download-btn">Download Timetable</button>
+        <button id="pomodoro-btn">Pomodoro</button>
       </div>
     </header>
 
     <!-- Motivational Tip Section -->
     <section id="motivational-tip"></section>
 
-    <!-- Task Manager Section: Task Form and Task List -->
+    <!-- Task Manager Section -->
     <section id="task-manager">
-      <!-- Form to Add a New Task -->
       <form id="task-form">
         <input type="text" id="task-title" placeholder="Task Title" required>
         <textarea id="task-desc" placeholder="Task Description"></textarea>
@@ -216,32 +325,33 @@
         <input type="number" id="task-duration" placeholder="Duration (minutes)" required>
         <button type="submit">Add Task</button>
       </form>
-      
-      <!-- Task List -->
       <ul id="task-list"></ul>
     </section>
+  </div>
 
-    <!-- Corner Timer for Starting Tasks -->
-    <div id="corner-timer">
-      <h3>Task Timer</h3>
-      <input type="number" id="timer-duration" placeholder="Minutes" min="1">
-      <button id="start-timer">Start Timer</button>
-      <div id="timer-display">00:00</div>
-      <button id="stop-timer">Stop Timer</button>
+  <!-- Pomodoro Modal -->
+  <div id="pomodoro-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="pomodoro-close">&times;</span>
+      <h2>Pomodoro Timer</h2>
+      <label for="pomodoro-task-select">Select Task:</label>
+      <select id="pomodoro-task-select"></select>
+      <label for="pomodoro-duration">
+        Duration (minutes): <span id="pomodoro-duration-display">25</span>
+      </label>
+      <input type="range" id="pomodoro-duration" min="10" max="60" value="25">
+      <button id="pomodoro-start-btn">Start Pomodoro</button>
+      <div id="pomodoro-timer-display" style="text-align:center; font-size:1.5em; margin-top:10px;">00:00</div>
     </div>
   </div>
 
   <script>
     /************************************************************
-     * Advanced Local Task Manager JavaScript Code
+     * Advanced Task Manager JavaScript Code
      ************************************************************/
-
-    // Global array to hold tasks
     let tasks = [];
-
-    // Timer variables
-    let timerInterval = null;
-    let timerRemainingSeconds = 0;
+    let pomodoroInterval = null;
+    let pomodoroRemainingSeconds = 0;
 
     // Array of motivational tips
     const motivationalTips = [
@@ -252,9 +362,6 @@
       "Your potential is limitless."
     ];
 
-    // ----------------------------
-    // Motivational Tip Functionality
-    // ----------------------------
     // Display a random motivational tip on load
     function displayMotivationalTip() {
       const tipElement = document.getElementById('motivational-tip');
@@ -263,14 +370,10 @@
     }
     displayMotivationalTip();
 
-    // ----------------------------
     // Local Storage Functions
-    // ----------------------------
-    // Save tasks to localStorage
     function saveTasks() {
       localStorage.setItem('tasks', JSON.stringify(tasks));
     }
-    // Load tasks from localStorage
     function loadTasks() {
       const storedTasks = localStorage.getItem('tasks');
       if (storedTasks) {
@@ -278,56 +381,45 @@
       }
     }
 
-    // ----------------------------
-    // Task Rendering and Management
-    // ----------------------------
     // Render the task list in the UI
     function renderTasks() {
       const taskList = document.getElementById('task-list');
-      taskList.innerHTML = ''; // Clear current list
-
-      // Sort tasks by scheduled time
+      taskList.innerHTML = '';
       tasks.sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
-
       tasks.forEach(task => {
         const li = document.createElement('li');
         li.className = 'task-item';
         if(task.completed) li.classList.add('completed');
         li.dataset.id = task.id;
-
-        // Task header with title and action buttons
+        
         const header = document.createElement('header');
         const title = document.createElement('h4');
         title.textContent = task.title;
         header.appendChild(title);
-
+        
         const actionsDiv = document.createElement('div');
         actionsDiv.className = 'actions';
-
-        // Edit button
+        
         const editBtn = document.createElement('button');
         editBtn.textContent = 'Edit';
         editBtn.className = 'edit';
         editBtn.onclick = () => editTask(task.id);
         actionsDiv.appendChild(editBtn);
-
-        // Complete/Undo button
+        
         const completeBtn = document.createElement('button');
         completeBtn.textContent = task.completed ? 'Undo' : 'Complete';
         completeBtn.className = 'complete';
         completeBtn.onclick = () => toggleCompleteTask(task.id);
         actionsDiv.appendChild(completeBtn);
-
-        // Delete button
+        
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete';
         deleteBtn.onclick = () => deleteTask(task.id);
         actionsDiv.appendChild(deleteBtn);
-
+        
         header.appendChild(actionsDiv);
         li.appendChild(header);
-
-        // Task details section
+        
         const details = document.createElement('div');
         details.innerHTML = `
           <p>${task.description}</p>
@@ -335,7 +427,6 @@
           <p><strong>Duration:</strong> ${task.duration} minutes</p>
         `;
         if(task.completed && task.actualCompletionTime) {
-          // Calculate delay in minutes (if any)
           let delay = Math.max(0, (new Date(task.actualCompletionTime) - new Date(task.scheduledTime)) / 60000).toFixed(2);
           details.innerHTML += `<p><strong>Completed:</strong> ${new Date(task.actualCompletionTime).toLocaleString()} (${delay} min delay)</p>`;
         }
@@ -351,8 +442,7 @@
       const description = document.getElementById('task-desc').value;
       const scheduledTime = document.getElementById('task-time').value;
       const duration = document.getElementById('task-duration').value;
-
-      // Create a new task object
+      
       const newTask = {
         id: Date.now(),
         title,
@@ -362,7 +452,7 @@
         completed: false,
         actualCompletionTime: null
       };
-
+      
       tasks.push(newTask);
       saveTasks();
       renderTasks();
@@ -373,7 +463,7 @@
     function editTask(id) {
       const task = tasks.find(t => t.id == id);
       if(!task) return;
-
+      
       const newTitle = prompt("Edit Task Title:", task.title);
       if(newTitle !== null) task.title = newTitle;
       const newDesc = prompt("Edit Task Description:", task.description);
@@ -382,7 +472,7 @@
       if(newTime !== null) task.scheduledTime = newTime;
       const newDuration = prompt("Edit Duration (minutes):", task.duration);
       if(newDuration !== null) task.duration = newDuration;
-
+      
       saveTasks();
       renderTasks();
     }
@@ -398,90 +488,103 @@
     function toggleCompleteTask(id) {
       const task = tasks.find(t => t.id == id);
       if(!task) return;
-
+      
       task.completed = !task.completed;
       if(task.completed) {
-        // Record actual completion time
         task.actualCompletionTime = new Date().toISOString();
-        // Calculate delay (if any) in minutes
-        const delay = Math.max(0, (new Date(task.actualCompletionTime) - new Date(task.scheduledTime)) / 60000);
-        if(delay > 0) {
-          // Adjust scheduled time for subsequent tasks
-          updateSubsequentTasks(task, delay);
-        }
       } else {
-        // Reset completion time if undone
         task.actualCompletionTime = null;
       }
       saveTasks();
       renderTasks();
     }
 
-    // Update scheduled time for tasks that come after a completed task
-    function updateSubsequentTasks(completedTask, delay) {
-      // Ensure tasks are sorted by scheduled time
-      tasks.sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
-      let applyDelay = false;
-      tasks.forEach(task => {
-        if(task.id == completedTask.id) {
-          applyDelay = true;
-          return;
-        }
-        // Only adjust pending tasks after the completed one
-        if(applyDelay && !task.completed) {
-          let currentTime = new Date(task.scheduledTime);
-          currentTime.setMinutes(currentTime.getMinutes() + delay);
-          // Format as YYYY-MM-DDTHH:MM for consistency
-          task.scheduledTime = currentTime.toISOString().slice(0,16);
-        }
-      });
-      saveTasks();
-    }
-
-    // ----------------------------
-    // Event Listeners for Task Management
-    // ----------------------------
     document.getElementById('task-form').addEventListener('submit', addTask);
-
-    // Load tasks on startup
     loadTasks();
     renderTasks();
 
-    // ----------------------------
-    // Corner Timer Functionality
-    // ----------------------------
-    // Start the timer based on input minutes
-    document.getElementById('start-timer').addEventListener('click', function() {
-      const minutes = parseInt(document.getElementById('timer-duration').value);
-      if(isNaN(minutes) || minutes <= 0) return;
-      timerRemainingSeconds = minutes * 60;
-      if(timerInterval) clearInterval(timerInterval);
-      timerInterval = setInterval(function() {
-        if(timerRemainingSeconds <= 0) {
-          clearInterval(timerInterval);
-          timerInterval = null;
-          document.getElementById('timer-display').textContent = "Time's up!";
+    /* =========================
+       Pomodoro Modal & Timer Functionality
+    ========================= */
+    const pomodoroBtn = document.getElementById('pomodoro-btn');
+    const pomodoroModal = document.getElementById('pomodoro-modal');
+    const pomodoroClose = document.getElementById('pomodoro-close');
+    const pomodoroTaskSelect = document.getElementById('pomodoro-task-select');
+    const pomodoroDurationInput = document.getElementById('pomodoro-duration');
+    const pomodoroDurationDisplay = document.getElementById('pomodoro-duration-display');
+    const pomodoroStartBtn = document.getElementById('pomodoro-start-btn');
+    const pomodoroTimerDisplay = document.getElementById('pomodoro-timer-display');
+
+    // Open Pomodoro Modal
+    pomodoroBtn.addEventListener('click', () => {
+      populatePomodoroTaskSelect();
+      pomodoroModal.style.display = 'flex';
+    });
+
+    // Close Modal
+    pomodoroClose.addEventListener('click', () => {
+      closePomodoroModal();
+    });
+    window.addEventListener('click', (e) => {
+      if (e.target === pomodoroModal) {
+        closePomodoroModal();
+      }
+    });
+
+    function closePomodoroModal() {
+      pomodoroModal.style.display = 'none';
+      clearInterval(pomodoroInterval);
+      pomodoroInterval = null;
+      pomodoroTimerDisplay.textContent = "00:00";
+    }
+
+    // Populate tasks for Pomodoro (only incomplete tasks)
+    function populatePomodoroTaskSelect() {
+      pomodoroTaskSelect.innerHTML = "";
+      tasks.filter(task => !task.completed).forEach(task => {
+        const option = document.createElement('option');
+        option.value = task.id;
+        option.textContent = task.title;
+        pomodoroTaskSelect.appendChild(option);
+      });
+    }
+
+    // Update slider display value
+    pomodoroDurationInput.addEventListener('input', () => {
+      pomodoroDurationDisplay.textContent = pomodoroDurationInput.value;
+    });
+
+    // Start Pomodoro Timer
+    pomodoroStartBtn.addEventListener('click', () => {
+      const selectedTaskId = pomodoroTaskSelect.value;
+      const duration = parseInt(pomodoroDurationInput.value);
+      if (!selectedTaskId || isNaN(duration) || duration <= 0) {
+        alert("Please select a task and a valid duration.");
+        return;
+      }
+      pomodoroRemainingSeconds = duration * 60;
+      if(pomodoroInterval) clearInterval(pomodoroInterval);
+      pomodoroInterval = setInterval(() => {
+        if(pomodoroRemainingSeconds <= 0) {
+          clearInterval(pomodoroInterval);
+          pomodoroInterval = null;
+          pomodoroTimerDisplay.textContent = "Time's up!";
           playSound();
+          alert("Pomodoro session finished for the selected task!");
+          closePomodoroModal();
         } else {
-          const mins = Math.floor(timerRemainingSeconds / 60);
-          const secs = timerRemainingSeconds % 60;
-          document.getElementById('timer-display').textContent = 
+          const mins = Math.floor(pomodoroRemainingSeconds / 60);
+          const secs = pomodoroRemainingSeconds % 60;
+          pomodoroTimerDisplay.textContent = 
             (mins < 10 ? '0' : '') + mins + ':' + (secs < 10 ? '0' : '') + secs;
-          timerRemainingSeconds--;
+          pomodoroRemainingSeconds--;
         }
       }, 1000);
     });
 
-    // Stop the timer manually
-    document.getElementById('stop-timer').addEventListener('click', function() {
-      if(timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-        document.getElementById('timer-display').textContent = "00:00";
-      }
-    });
-
-    // Play a beep sound using the Web Audio API when the timer ends
+    /* =========================
+       Sound on Timer End
+    ========================= */
     function playSound() {
       const context = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = context.createOscillator();
@@ -489,26 +592,24 @@
       oscillator.connect(gainNode);
       gainNode.connect(context.destination);
       oscillator.type = 'sine';
-      oscillator.frequency.value = 1000; // Frequency in hertz
+      oscillator.frequency.value = 1000;
       oscillator.start();
-      // Gradually reduce volume over 1 second
       gainNode.gain.exponentialRampToValueAtTime(0.00001, context.currentTime + 1);
       oscillator.stop(context.currentTime + 1);
     }
 
-    // ----------------------------
-    // Theme Selection & Persistence
-    // ----------------------------
-    // Change theme based on selector and save preference
+    /* =========================
+       Theme Selection & Persistence
+    ========================= */
     document.getElementById('theme-selector').addEventListener('change', function() {
       const theme = this.value;
-      document.body.className = ''; // Reset classes
+      // Reset any previous theme classes on body
+      document.body.className = '';
       if(theme && theme !== 'default') {
         document.body.classList.add(theme);
       }
       localStorage.setItem('theme', theme);
     });
-    // Load saved theme on startup
     function loadTheme() {
       const savedTheme = localStorage.getItem('theme');
       if(savedTheme) {
@@ -520,10 +621,9 @@
     }
     loadTheme();
 
-    // ----------------------------
-    // Timetable Download Functionality
-    // ----------------------------
-    // Generate a standalone HTML timetable and trigger download
+    /* =========================
+       Timetable Download Functionality
+    ========================= */
     function downloadTimetable() {
       let htmlContent = `
 <!DOCTYPE html>
@@ -532,10 +632,10 @@
   <meta charset="UTF-8">
   <title>Task Timetable</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
+    body { font-family: 'Quicksand', sans-serif; margin: 20px; }
     table { border-collapse: collapse; width: 100%; }
-    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-    th { background-color: #3498db; color: #fff; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background-color: var(--primary-color); color: #fff; }
   </style>
 </head>
 <body>
@@ -548,8 +648,6 @@
       <th>Duration (min)</th>
       <th>Status</th>
     </tr>`;
-      
-      // Sort tasks by scheduled time
       tasks.sort((a, b) => new Date(a.scheduledTime) - new Date(b.scheduledTime));
       tasks.forEach(task => {
         htmlContent += `
@@ -561,13 +659,10 @@
       <td>${task.completed ? 'Completed' : 'Pending'}</td>
     </tr>`;
       });
-      
       htmlContent += `
   </table>
 </body>
 </html>`;
-      
-      // Create a Blob and trigger the download
       const blob = new Blob([htmlContent], { type: 'text/html' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
